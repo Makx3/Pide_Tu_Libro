@@ -1,0 +1,3 @@
+El Señor de los Anillos,J.R.R. Tolkien,false
+Cien años de soledad,Gabriel García Márquez,true
+1984,George Orwell,false
