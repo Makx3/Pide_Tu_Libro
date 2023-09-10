@@ -1,4 +1,4 @@
-package org.example;
+package src.main.java.org.example;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Biblioteca {
 
-    private static final String LIBROS_TXT = "C:\\Users\\Usuario\\IdeaProjects\\Pide_tu_libro\\src\\main\\java\\org\\example\\libros.txt";
+    private static final String LIBROS_TXT = "C:\\Users\\diego\\IdeaProjects\\Hola\\Pide_Tu_Libro\\src\\main\\java\\org\\example\\libros.txt";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -97,8 +97,17 @@ public class Biblioteca {
         System.out.println("=== Libros Disponibles ===");
         for (int i = 0; i < listaLibros.size(); i++) {
             String[] libro = listaLibros.get(i);
-            if (Boolean.parseBoolean(libro[3])) {
-                System.out.println((i + 1) + ". " + libro[0] + " - " + libro[1] + " (ISBN: " + libro[2] + ")");
+            String titulo = libro[0];
+            String autor = libro[1];
+            String isbn = libro[2];
+            int copiasDisponibles = Integer.parseInt(libro[3]);
+
+            System.out.println((i + 1) + ". " + titulo + " - " + autor + " (ISBN: " + isbn + ")");
+
+            if (copiasDisponibles == 0) {
+                System.out.println("No quedan copias de este libro.");
+            } else {
+                System.out.println("Copias disponibles: " + copiasDisponibles);
             }
         }
     }
@@ -109,7 +118,7 @@ public class Biblioteca {
         List<String[]> librosEncontrados = new ArrayList<>();
 
         for (String[] libro : listaLibros) {
-            if (libro[0].equalsIgnoreCase(tituloBuscado) && Boolean.parseBoolean(libro[3])) {
+            if (libro[0].equalsIgnoreCase(tituloBuscado) && Integer.parseInt(libro[3]) > 0) {
                 librosEncontrados.add(libro);
             }
         }
@@ -118,10 +127,16 @@ public class Biblioteca {
             System.out.println("=== Libros Encontrados ===");
             for (int i = 0; i < librosEncontrados.size(); i++) {
                 String[] libro = librosEncontrados.get(i);
-                System.out.println((i + 1) + ". " + libro[0] + " - " + libro[1] + " (ISBN: " + libro[2] + ")");
+                String titulo = libro[0];
+                String autor = libro[1];
+                String isbn = libro[2];
+                int copiasDisponibles = Integer.parseInt(libro[3]);
+
+                System.out.println((i + 1) + ". " + titulo + " - " + autor + " (ISBN: " + isbn + ")");
+                System.out.println("Copias disponibles: " + copiasDisponibles);
             }
         } else {
-            System.out.println("No se encontró ningún libro disponible con ese título.");
+            System.out.println("No se encontró ningún libro disponible con ese título o no quedan copias.");
         }
     }
 
@@ -157,7 +172,7 @@ public class Biblioteca {
         List<String[]> librosDisponibles = new ArrayList<>();
 
         for (String[] libro : listaLibros) {
-            if (libro[0].equalsIgnoreCase(tituloBuscado) && Boolean.parseBoolean(libro[3])) {
+            if (libro[0].equalsIgnoreCase(tituloBuscado) && Integer.parseInt(libro[3]) > 0) {
                 librosDisponibles.add(libro);
             }
         }
@@ -166,7 +181,13 @@ public class Biblioteca {
             System.out.println("=== Libros Disponibles ===");
             for (int i = 0; i < librosDisponibles.size(); i++) {
                 String[] libro = librosDisponibles.get(i);
-                System.out.println((i + 1) + ". " + libro[0] + " - " + libro[1] + " (ISBN: " + libro[2] + ")");
+                String titulo = libro[0];
+                String autor = libro[1];
+                String isbn = libro[2];
+                int copiasDisponibles = Integer.parseInt(libro[3]);
+
+                System.out.println((i + 1) + ". " + titulo + " - " + autor + " (ISBN: " + isbn + ")");
+                System.out.println("Copias disponibles: " + copiasDisponibles);
             }
 
             System.out.print("Seleccione el número de libro que desea reservar o ingrese 0 para volver: ");
@@ -176,7 +197,12 @@ public class Biblioteca {
             if (seleccion >= 1 && seleccion <= librosDisponibles.size()) {
                 String[] libroSeleccionado = librosDisponibles.get(seleccion - 1);
                 System.out.println("Reservando el libro: " + libroSeleccionado[0]);
-                libroSeleccionado[3] = "false"; // Cambiar el estado a no disponible
+                int copiasDisponibles = Integer.parseInt(libroSeleccionado[3]);
+                copiasDisponibles--; // Reducir la cantidad de copias disponibles en 1
+                libroSeleccionado[3] = String.valueOf(copiasDisponibles); // Actualizar la cantidad en el arreglo
+                if (copiasDisponibles == 0) {
+                    System.out.println("No quedan copias de este libro.");
+                }
                 guardarLibrosEnTXT(LIBROS_TXT, listaLibros);
             } else if (seleccion == 0) {
                 return; // Volver al menú anterior
@@ -184,7 +210,7 @@ public class Biblioteca {
                 System.out.println("Opción no válida. Intente nuevamente.");
             }
         } else {
-            System.out.println("No se encontró ningún libro disponible con ese título.");
+            System.out.println("No se encontró ningún libro disponible con ese título o no quedan copias.");
         }
     }
 
@@ -194,7 +220,7 @@ public class Biblioteca {
         List<String[]> librosDisponibles = new ArrayList<>();
 
         for (String[] libro : listaLibros) {
-            if (libro[2].equalsIgnoreCase(isbnBuscado) && Boolean.parseBoolean(libro[3])) {
+            if (libro[2].equalsIgnoreCase(isbnBuscado) && Integer.parseInt(libro[3]) > 0) {
                 librosDisponibles.add(libro);
             }
         }
@@ -203,7 +229,13 @@ public class Biblioteca {
             System.out.println("=== Libros Disponibles ===");
             for (int i = 0; i < librosDisponibles.size(); i++) {
                 String[] libro = librosDisponibles.get(i);
-                System.out.println((i + 1) + ". " + libro[0] + " - " + libro[1] + " (ISBN: " + libro[2] + ")");
+                String titulo = libro[0];
+                String autor = libro[1];
+                String isbn = libro[2];
+                int copiasDisponibles = Integer.parseInt(libro[3]);
+
+                System.out.println((i + 1) + ". " + titulo + " - " + autor + " (ISBN: " + isbn + ")");
+                System.out.println("Copias disponibles: " + copiasDisponibles);
             }
 
             System.out.print("Seleccione el número de libro que desea reservar o ingrese 0 para volver: ");
@@ -213,7 +245,12 @@ public class Biblioteca {
             if (seleccion >= 1 && seleccion <= librosDisponibles.size()) {
                 String[] libroSeleccionado = librosDisponibles.get(seleccion - 1);
                 System.out.println("Reservando el libro: " + libroSeleccionado[0]);
-                libroSeleccionado[3] = "false"; // Cambiar el estado a no disponible
+                int copiasDisponibles = Integer.parseInt(libroSeleccionado[3]);
+                copiasDisponibles--; // Reducir la cantidad de copias disponibles en 1
+                libroSeleccionado[3] = String.valueOf(copiasDisponibles); // Actualizar la cantidad en el arreglo
+                if (copiasDisponibles == 0) {
+                    System.out.println("No quedan copias de este libro.");
+                }
                 guardarLibrosEnTXT(LIBROS_TXT, listaLibros);
             } else if (seleccion == 0) {
                 return; // Volver al menú anterior
@@ -221,7 +258,7 @@ public class Biblioteca {
                 System.out.println("Opción no válida. Intente nuevamente.");
             }
         } else {
-            System.out.println("No se encontró ningún libro disponible con ese ISBN.");
+            System.out.println("No se encontró ningún libro disponible con ese ISBN o no quedan copias.");
         }
     }
 
