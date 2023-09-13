@@ -1,3 +1,10 @@
-El Señor de los Anillos,J.R.R. Tolkien,false
-Cien años de soledad,Gabriel García Márquez,true
-1984,George Orwell,false
+El Señor de los Anillos,J.R.R. Tolkien,978-8497593784,0
+Cien años de soledad,Gabriel García Márquez,978-0307474728,3
+1984,George Orwell,978-0451524935,5
+Don Quijote de la Mancha,Miguel de Cervantes,978-8420412146,7
+Orgullo y prejuicio,Jane Austen,978-8497940480,0
+Crimen y castigo,Fyodor Dostoevsky,978-0141192802,9
+Matar a un ruiseñor,Harper Lee,978-0061120084,1
+La Odisea,Homero,978-8420673596,4
+Hamlet,William Shakespeare,978-0143128547,5
+Las aventuras de Sherlock Holmes,Arthur Conan Doyle,978-8497940015,8
