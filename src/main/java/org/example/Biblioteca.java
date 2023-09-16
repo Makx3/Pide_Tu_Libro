@@ -1,7 +1,6 @@
-package org.example;
-
 import java.io.*;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,18 +15,18 @@ public class Biblioteca {
 
         while (true) {
             mostrarMenuBiblioteca();
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
+            int opcion = obtenerOpcionValida(scanner);
 
             switch (opcion) {
                 case 1:
                     mostrarMenuLibrosDisponibles(scanner);
                     break;
                 case 2:
-                    reservarLibro(scanner);
+                    reservarLibro(scanner, listaLibros);
                     break;
                 case 3:
                     System.out.println("Saliendo del programa.");
+                    guardarLibrosEnTXT(LIBROS_TXT, listaLibros);
                     System.exit(0);
                     break;
                 default:
@@ -46,7 +45,28 @@ public class Biblioteca {
         System.out.println("|----------------------------------|");
     }
 
-    private static List<String[]> cargarLibrosDesdeTXT(String archivo) {
+    public static int obtenerOpcionValida(Scanner scanner) {
+        int opcion = 0;
+        boolean opcionValida = false;
+
+        while (!opcionValida) {
+            try {
+                opcion = scanner.nextInt();
+                scanner.nextLine(); // Consumir el salto de línea
+                opcionValida = opcion >= 1 && opcion <= 3;
+                if (!opcionValida) {
+                    System.out.println("Opción no válida. Ingrese un número entre 1 y 3.");
+                }
+            } catch (InputMismatchException e) {
+                scanner.nextLine(); // Limpiar el buffer del scanner
+                System.out.println("Entrada inválida. Ingrese un número válido.");
+            }
+        }
+
+        return opcion;
+    }
+
+    public static List<String[]> cargarLibrosDesdeTXT(String archivo) {
         List<String[]> listaLibros = new ArrayList<>();
 
         File archivoLibros = new File(archivo);
@@ -61,7 +81,7 @@ public class Biblioteca {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Error al leer el archivo de libros: " + e.getMessage());
             }
         } else {
             System.out.println("El archivo de libros no existe.");
@@ -70,7 +90,7 @@ public class Biblioteca {
         return listaLibros;
     }
 
-    private static void mostrarMenuLibrosDisponibles(Scanner scanner) {
+    public static void mostrarMenuLibrosDisponibles(Scanner scanner) {
         while (true) {
             System.out.println("|----- Ver Libros Disponibles -----|");
             System.out.println("|                                  |");
@@ -79,8 +99,7 @@ public class Biblioteca {
             System.out.println("| 3. Volver al menú principal      |");
             System.out.println("|----------------------------------|");
 
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
+            int opcion = obtenerOpcionValida(scanner);
 
             switch (opcion) {
                 case 1:
@@ -98,12 +117,12 @@ public class Biblioteca {
         }
     }
 
-    private static void mostrarLibrosDisponibles() {
+    public static void mostrarLibrosDisponibles() {
         System.out.println("|--- Libros Disponibles ---|");
         validarLibrosDisponibles();
     }
 
-    private static void validarLibrosDisponibles() {
+    public static void validarLibrosDisponibles() {
         for (int i = 0; i < listaLibros.size(); i++) {
             String[] libro = listaLibros.get(i);
             String titulo = libro[0];
@@ -121,7 +140,7 @@ public class Biblioteca {
         }
     }
 
-    private static void buscarLibrosPorTitulo(Scanner scanner) {
+    public static void buscarLibrosPorTitulo(Scanner scanner) {
         System.out.print("Ingrese el título del libro que desea buscar: ");
         String tituloBuscado = scanner.nextLine();
         List<String[]> librosEncontrados = new ArrayList<>();
@@ -149,15 +168,14 @@ public class Biblioteca {
         }
     }
 
-    private static void reservarLibro(Scanner scanner) {
+    public static void reservarLibro(Scanner scanner, List<String[]> listaLibros) {
         System.out.println("|--- Reservar Libro ---|");
         System.out.println("Seleccione cómo desea buscar el libro:");
         System.out.println("1. Buscar por Título");
         System.out.println("2. Buscar por ISBN");
         System.out.println("3. Volver al menú principal");
 
-        int opcion = scanner.nextInt();
-        scanner.nextLine();
+        int opcion = obtenerOpcionValida(scanner);
 
         switch (opcion) {
             case 1:
@@ -174,7 +192,7 @@ public class Biblioteca {
         }
     }
 
-    private static void buscarLibroPorTituloYReservar(Scanner scanner) {
+    public static void buscarLibroPorTituloYReservar(Scanner scanner) {
         System.out.print("Ingrese el título del libro que desea reservar: ");
         String tituloBuscado = scanner.nextLine();
         List<String[]> librosDisponibles = new ArrayList<>();
@@ -198,9 +216,7 @@ public class Biblioteca {
                 System.out.println("Copias disponibles: " + copiasDisponibles);
             }
 
-            System.out.print("Seleccione el número de libro que desea reservar o ingrese 0 para volver: ");
-            int seleccion = scanner.nextInt();
-            scanner.nextLine();
+            int seleccion = obtenerOpcionValida(scanner);
 
             if (seleccion >= 1 && seleccion <= librosDisponibles.size()) {
                 String[] libroSeleccionado = librosDisponibles.get(seleccion - 1);
@@ -212,7 +228,7 @@ public class Biblioteca {
                     System.out.println("No quedan copias de este libro.");
                 }
                 guardarLibrosEnTXT(LIBROS_TXT, listaLibros);
-            } else if (seleccion == 0) {
+            } else if (seleccion == 3) {
                 return;
             } else {
                 System.out.println("Opción no válida. Intente nuevamente.");
@@ -222,7 +238,7 @@ public class Biblioteca {
         }
     }
 
-    private static void buscarLibroPorISBNYReservar(Scanner scanner) {
+    public static void buscarLibroPorISBNYReservar(Scanner scanner) {
         System.out.print("Ingrese el ISBN del libro que desea reservar: ");
         String isbnBuscado = scanner.nextLine();
         List<String[]> librosDisponibles = new ArrayList<>();
@@ -246,9 +262,7 @@ public class Biblioteca {
                 System.out.println("Copias disponibles: " + copiasDisponibles);
             }
 
-            System.out.print("Seleccione el número de libro que desea reservar o ingrese 0 para volver: ");
-            int seleccion = scanner.nextInt();
-            scanner.nextLine();
+            int seleccion = obtenerOpcionValida(scanner);
 
             if (seleccion >= 1 && seleccion <= librosDisponibles.size()) {
                 String[] libroSeleccionado = librosDisponibles.get(seleccion - 1);
@@ -260,7 +274,7 @@ public class Biblioteca {
                     System.out.println("No quedan copias de este libro.");
                 }
                 guardarLibrosEnTXT(LIBROS_TXT, listaLibros);
-            } else if (seleccion == 0) {
+            } else if (seleccion == 3) {
                 return;
             } else {
                 System.out.println("Opción no válida. Intente nuevamente.");
@@ -270,14 +284,14 @@ public class Biblioteca {
         }
     }
 
-    private static void guardarLibrosEnTXT(String archivo, List<String[]> listaLibros) {
+    public static void guardarLibrosEnTXT(String archivo, List<String[]> listaLibros) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
             for (String[] libro : listaLibros) {
                 writer.write(String.join(",", libro));
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error al escribir en el archivo de libros: " + e.getMessage());
         }
     }
 }
